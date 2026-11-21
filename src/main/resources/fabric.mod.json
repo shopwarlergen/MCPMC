@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "mcpmc",
+  "version": "${version}",
+  "name": "MCPMC",
+  "description": "Model Context Protocol (MCP) bridge for Minecraft Fabric 1.21.11",
+  "authors": [
+    "shopwarlergen"
+  ],
+  "contact": {
+    "repo": "https://github.com/shopwarlergen/MCPMC"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.mcpmc.McpClientMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.11",
+    "fabric-api": "*"
+  }
+}

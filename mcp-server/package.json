@@ -1,0 +1,15 @@
+{
+  "name": "minecraft-mcp-server",
+  "version": "1.0.0",
+  "description": "Standalone Node.js MCP Server Bridge for Minecraft 1.21.11 Fabric Client",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "ws": "^8.18.0",
+    "zod": "^3.24.1"
+  }
+}

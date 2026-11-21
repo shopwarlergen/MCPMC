@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+out/
+classes/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+*.DS_Store
+
+# Fabric run
+run/
+
+# Node.js MCP server
+mcp-server/node_modules/
+mcp-server/.npm/
+mcp-server/.npm-cache/
