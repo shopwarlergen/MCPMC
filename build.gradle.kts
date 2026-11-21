@@ -52,6 +52,15 @@ tasks {
         archiveFileName.set("mcpmc.jar")
     }
 
+    val copyToModrinth = register<Copy>("copyToModrinth") {
+        from(remapJar)
+        into("D:/ModrinthApp/profiles/1.21.11/mods")
+    }
+
+    build {
+        finalizedBy(copyToModrinth)
+    }
+
     java {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
