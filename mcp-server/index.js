@@ -3,6 +3,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import WebSocket from "ws";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
+import { parseSchematic } from "./schematic-parser.js";
+import { printSchematic, verifyStructure } from "./schematic-printer.js";
 
 // ==========================================
 // CẤU HÌNH & QUẢN LÝ KẾT NỐI WEBSOCKET
@@ -278,6 +280,115 @@ server.tool(
       .describe("Mặt khối cần tương tác (tùy chọn, mặc định tự chọn mặt quay về phía nhân vật)")
   },
   async (args) => callBridge("interact_block", args)
+);
+
+// Tool 14: mc_parse_schematic
+server.tool(
+  "mc_parse_schematic",
+  "Phân tích tệp schematic (.litematic hoặc .schem) và trả về thông tin kích thước, số lượng khối, danh sách palette và số khối không phải không khí.",
+  {
+    path: z.string().describe("Đường dẫn tuyệt đối hoặc tương đối tới tệp schematic (.litematic hoặc .schem)")
+  },
+  async ({ path }) => {
+    try {
+      const parsed = parseSchematic(path);
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            format: parsed.format,
+            width: parsed.width,
+            height: parsed.height,
+            length: parsed.length,
+            totalBlocks: parsed.totalBlocks,
+            nonAirBlocks: parsed.nonAirBlocks,
+            palette: parsed.palette
+          }, null, 2)
+        }]
+      };
+    } catch (err) {
+      return {
+        content: [{ type: "text", text: `[Lỗi Parse Schematic] ${err.message}` }],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool 15: mc_print_schematic
+server.tool(
+  "mc_print_schematic",
+  "Tự động in/xây dựng một schematic (.litematic hoặc .schem) vào thế giới Minecraft tại tọa độ gốc chỉ định (x, y, z) theo thứ tự từ dưới lên trên (Y-ascending) và hỗ trợ tự động thử lại khi gặp lỗi.",
+  {
+    path: z.string().describe("Đường dẫn tới tệp schematic"),
+    x: z.number().int().describe("Tọa độ X gốc trong thế giới (góc nhỏ nhất của cấu trúc)"),
+    y: z.number().int().describe("Tọa độ Y gốc trong thế giới (góc nhỏ nhất của cấu trúc)"),
+    z: z.number().int().describe("Tọa độ Z gốc trong thế giới (góc nhỏ nhất của cấu trúc)"),
+    skip_air: z.boolean().optional().default(true).describe("Bỏ qua việc đặt các khối không khí (mặc định: true)"),
+    clear_area: z.boolean().optional().default(false).describe("Dọn sạch không gian xây dựng bằng /fill air trước khi đặt (mặc định: false)"),
+    dry_run: z.boolean().optional().default(false).describe("Chạy thử nghiệm không làm thay đổi thế giới, trả về kế hoạch đặt khối (mặc định: false)")
+  },
+  async ({ path, x, y, z, skip_air, clear_area, dry_run }) => {
+    try {
+      const printResult = await printSchematic(
+        { sendWsRequest },
+        path,
+        x,
+        y,
+        z,
+        {
+          skipAir: skip_air ?? true,
+          clearArea: clear_area ?? false,
+          dryRun: dry_run ?? false
+        }
+      );
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(printResult, null, 2)
+        }]
+      };
+    } catch (err) {
+      return {
+        content: [{ type: "text", text: `[Lỗi Print Schematic] ${err.message}` }],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool 16: mc_verify_structure
+server.tool(
+  "mc_verify_structure",
+  "Kiểm tra và đối chiếu các khối trong thế giới game tại tọa độ chỉ định so với bản vẽ schematic gốc để xác minh độ chính xác 100%.",
+  {
+    path: z.string().describe("Đường dẫn tới tệp schematic gốc"),
+    x: z.number().int().describe("Tọa độ X gốc trong thế giới"),
+    y: z.number().int().describe("Tọa độ Y gốc trong thế giới"),
+    z: z.number().int().describe("Tọa độ Z gốc trong thế giới")
+  },
+  async ({ path, x, y, z }) => {
+    try {
+      const verifyResult = await verifyStructure(
+        { sendWsRequest },
+        path,
+        x,
+        y,
+        z
+      );
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(verifyResult, null, 2)
+        }]
+      };
+    } catch (err) {
+      return {
+        content: [{ type: "text", text: `[Lỗi Verify Structure] ${err.message}` }],
+        isError: true
+      };
+    }
+  }
 );
 
 // ==========================================

@@ -99,6 +99,9 @@ Khởi động lại ứng dụng AI, bạn sẽ thấy biểu tượng 13 công
 | `close_current_screen` | 🖐️ Tay (Hành động) | Đóng màn hình rương / GUI đang mở |
 | `look_at` | 🖐️ Tay (Hành động) | Xoay hướng nhìn của nhân vật sang góc bất kỳ |
 | `interact_block` | 🖐️ Tay (Hành động) | Chuột phải tương tác với khối (mở rương, gạt cần gạt, bấm nút) |
+| `mc_parse_schematic` | 🏗️ Xây dựng (Auto-Build) | Đọc và phân tích file bản vẽ `.litematic` / `.schem` (kích thước, danh sách vật liệu) |
+| `mc_print_schematic` | 🏗️ Xây dựng (Auto-Build) | Tự động in bản vẽ vào game từ dưới lên trên theo tầng Y (2 lượt thông minh) |
+| `mc_verify_structure` | 🏗️ Xây dựng (Auto-Build) | Quét và đối chiếu độ chính xác 100% của công trình trong game so với bản vẽ gốc |
 
 ---
 
